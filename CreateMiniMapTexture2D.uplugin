@@ -1,0 +1,24 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "CreateMiniMapTexture2D",
+	"Description": "",
+	"Category": "Other",
+	"CreatedBy": "Piang",
+	"CreatedByURL": "",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"CanContainContent": false,
+	"IsBetaVersion": false,
+	"IsExperimentalVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "CreateMiniMapTexture2D",
+			"Type": "Editor",
+			"LoadingPhase": "Default"
+		}
+	]
+}
