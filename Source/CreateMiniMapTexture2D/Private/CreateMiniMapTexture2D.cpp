@@ -3,7 +3,6 @@
 #include "CreateMiniMapTexture2D.h"
 #include "CreateMiniMapTexture2DStyle.h"
 #include "CreateMiniMapTexture2DCommands.h"
-#include "Misc/MessageDialog.h"
 #include "ToolMenus.h"
 #include "AssetRegistry/AssetRegistryModule.h"
 #include "Kismet/GameplayStatics.h"
@@ -88,128 +87,6 @@ void FCreateMiniMapTexture2DModule::RegisterMenus()
 void FCreateMiniMapTexture2DModule::Start()
 {
 	World = GWorld;
-	
-	/*WorldPartition = World ? World->GetWorldPartition() : nullptr;
-	if (WorldPartition)
-	{
-		UpdateWorldMiniMapDetails();
-	}*/
-
-	/*FString PackageName = TEXT("/Game/ProceduralTextures/");
-	FString TextureName = FString("TextureName");
-	PackageName += TextureName;
-	UPackage* Package = CreatePackage(NULL, *PackageName);
-	Package->FullyLoad();
-
-	UTexture2D* NewTexture = NewObject<UTexture2D>(Package, *TextureName, RF_Public | RF_Standalone | RF_MarkAsRootSet);
-	
-	NewTexture->AddToRoot();				// This line prevents garbage collection of the texture
-	NewTexture->PlatformData = new FTexturePlatformData();	// Then we initialize the PlatformData
-	
-	int32 TextureWidth = 2048.0f;
-	int32 TextureHeight = 2048.0f;
-	
-	NewTexture->PlatformData->SizeX = TextureWidth;
-	NewTexture->PlatformData->SizeY = TextureHeight;
-	NewTexture->PlatformData->SetNumSlices(1);
-	NewTexture->PlatformData->PixelFormat = EPixelFormat::PF_B8G8R8A8;
-	
-	uint8* Pixels = new uint8[TextureWidth * TextureHeight * 4];
-	for (int32 y = 0; y < TextureHeight; y++)
-	{
-		for (int32 x = 0; x < TextureWidth; x++)
-		{
-			int32 curPixelIndex = ((y * TextureWidth) + x);
-			Pixels[4 * curPixelIndex] = 0.0f;
-			Pixels[4 * curPixelIndex + 1] = 1.0f;
-			Pixels[4 * curPixelIndex + 2] = 0.1f;
-			Pixels[4 * curPixelIndex + 3] = 0.5f;
-		}
-	}
-	// Allocate first mipmap.
-	FTexture2DMipMap* Mip = new(NewTexture->PlatformData->Mips) FTexture2DMipMap();
-	Mip->SizeX = TextureWidth;
-	Mip->SizeY = TextureHeight;
-
-	// Lock the texture so it can be modified
-	Mip->BulkData.Lock(LOCK_READ_WRITE);
-	uint8* TextureData = (uint8*) Mip->BulkData.Realloc(TextureWidth * TextureHeight * 4);
-	FMemory::Memcpy(TextureData, Pixels, sizeof(uint8) * TextureHeight * TextureWidth * 4);
-	Mip->BulkData.Unlock();
-
-	NewTexture->Source.Init(TextureWidth, TextureHeight, 1, 1, ETextureSourceFormat::TSF_BGRA8, Pixels);
-
-	NewTexture->UpdateResource();
-	Package->MarkPackageDirty();
-	FAssetRegistryModule::AssetCreated(NewTexture);
-
-	FString PackageFileName = FPackageName::LongPackageNameToFilename(PackageName, FPackageName::GetAssetPackageExtension());
-	bool bSaved = UPackage::SavePackage(Package, NewTexture, EObjectFlags::RF_Public | EObjectFlags::RF_Standalone, *PackageFileName, GError, nullptr, true, true, SAVE_NoError);
-
-	delete[] Pixels;*/
-
-	/*AWorldPartitionMiniMap* WorldMiniMap = FWorldPartitionMiniMapHelper::GetWorldPartitionMiniMap(World);
-	if (WorldMiniMap)
-	{
-		WorldMiniMapBounds = FBox2D(FVector2D(WorldMiniMap->MiniMapWorldBounds.Min), FVector2D(WorldMiniMap->MiniMapWorldBounds.Max));
-		if (WorldMiniMap->MiniMapTexture)
-		{
-			//WorldMiniMap->MiniMapTexture->Source.GetBytesPerPixel();
-			FString PackageName = TEXT("/Game/ProceduralTextures/");
-			FString TextureName = FString("TextureName");
-			PackageName += TextureName;
-			UPackage* Package = CreatePackage(NULL, *PackageName);
-			Package->FullyLoad();
-
-			UTexture2D* NewTexture = NewObject<UTexture2D>(Package, *TextureName, RF_Public | RF_Standalone | RF_MarkAsRootSet);
-			//NewTexture = WorldMiniMap->MiniMapTexture;
-
-			NewTexture->AddToRoot();				// This line prevents garbage collection of the texture
-			NewTexture->PlatformData = new FTexturePlatformData();	// Then we initialize the PlatformData
-	
-			int32 TextureWidth = 2048.0f;
-			int32 TextureHeight = 2048.0f;
-	
-			NewTexture->PlatformData->SizeX = TextureWidth;
-			NewTexture->PlatformData->SizeY = TextureHeight;
-			NewTexture->PlatformData->SetNumSlices(1);
-			NewTexture->PlatformData->PixelFormat = EPixelFormat::PF_B8G8R8A8;
-			
-			FTexture2DMipMap* Mip = new(NewTexture->PlatformData->Mips) FTexture2DMipMap();
-			
-			Mip->SizeX = TextureWidth;
-			Mip->SizeY = TextureHeight;
-
-			// Lock the texture so it can be modified
-			Mip->BulkData.Lock(LOCK_READ_WRITE);
-			Mip->BulkData.Unlock();
-
-			uint8* Pixels = new uint8[TextureWidth * TextureHeight * 4];
-
-			/*for (int32 y = 0; y < TextureHeight; y++)
-			{
-				for (int32 x = 0; x < TextureWidth; x++)
-				{
-					int32 curPixelIndex = ((y * TextureWidth) + x);
-					Pixels[4 * curPixelIndex] = B;
-					Pixels[4 * curPixelIndex + 1] = G;
-					Pixels[4 * curPixelIndex + 2] = R;
-					Pixels[4 * curPixelIndex + 3] = A;
-				}
-			}#1#
-			
-			NewTexture->Source.Init(TextureWidth, TextureHeight, 1, 1, ETextureSourceFormat::TSF_BGRA8,Pixels);
-			
-			NewTexture->UpdateResource();
-			Package->MarkPackageDirty();
-			FAssetRegistryModule::AssetCreated(NewTexture);
-
-			FString PackageFileName = FPackageName::LongPackageNameToFilename(PackageName, FPackageName::GetAssetPackageExtension());
-			bool bSaved = UPackage::SavePackage(Package, NewTexture, EObjectFlags::RF_Public | EObjectFlags::RF_Standalone, *PackageFileName, GError, nullptr, true, true, SAVE_NoError);
-
-			delete Pixels;
-		}
-	}*/
 
 	//从UTexture2D读取数据
 	AWorldPartitionMiniMap* WorldMiniMap = FWorldPartitionMiniMapHelper::GetWorldPartitionMiniMap(World);
@@ -232,7 +109,7 @@ void FCreateMiniMapTexture2DModule::Start()
 			
 			FString AssetPath = TEXT("/Game/")+ PackageName+ TEXT("/");
 			AssetPath += TextureName;
-			UPackage* Package = CreatePackage(NULL, *AssetPath);
+			UPackage* Package = CreatePackage( *AssetPath);
 			Package->FullyLoad();
 
 			//图片大小
@@ -242,12 +119,12 @@ void FCreateMiniMapTexture2DModule::Start()
 			//取得UTexture2D的指针
 			UTexture2D* NewTexture = NewObject<UTexture2D>(Package, *TextureName, RF_Public | RF_Standalone | RF_MarkAsRootSet);
 			NewTexture->AddToRoot();            
-			NewTexture->PlatformData = new FTexturePlatformData();  
-			NewTexture->PlatformData->SizeX = TextureWidth;
-			NewTexture->PlatformData->SizeY = TextureHeight;
-			NewTexture->PlatformData->SetNumSlices(1);
+			NewTexture->SetPlatformData(new FTexturePlatformData());  
+			NewTexture->GetPlatformData()->SizeX = TextureWidth;
+			NewTexture->GetPlatformData()->SizeY = TextureHeight;
+			NewTexture->GetPlatformData()->SetNumSlices(1);
 			//设置像素格式
-			NewTexture->PlatformData->PixelFormat = EPixelFormat::PF_B8G8R8A8;
+			NewTexture->GetPlatformData()->PixelFormat = EPixelFormat::PF_B8G8R8A8;
 			
 			//写入数据
 			//创建一个uint8的数组并取得指针
@@ -261,7 +138,7 @@ void FCreateMiniMapTexture2DModule::Start()
 			MiniMapTexture->SRGB = false;
 			MiniMapTexture->UpdateResource();
 
-			const FColor* FormatedImageData = static_cast<const FColor*>(MiniMapTexture->PlatformData->Mips[0].BulkData.LockReadOnly());
+			const FColor* FormatedImageData = static_cast<const FColor*>(MiniMapTexture->GetPlatformData()->Mips[0].BulkData.LockReadOnly());
 
 			//FColor FormatedImageData = FColor(255,255,255,128);
 			uint8* Pixels = new uint8[TextureWidth * TextureHeight * 4];
@@ -282,7 +159,7 @@ void FCreateMiniMapTexture2DModule::Start()
 				}
 			}
 
-			MiniMapTexture->PlatformData->Mips[0].BulkData.Unlock();
+			MiniMapTexture->GetPlatformData()->Mips[0].BulkData.Unlock();
 
 			NewTexture->CompressionSettings = OldCompressionSettings;
 			NewTexture->MipGenSettings = OldMipGenSettings;
@@ -292,7 +169,7 @@ void FCreateMiniMapTexture2DModule::Start()
 			
 			//创建第一个MipMap
 			FTexture2DMipMap* Mip = new FTexture2DMipMap();
-			NewTexture->PlatformData->Mips.Add(Mip);
+			NewTexture->GetPlatformData()->Mips.Add(Mip);
 			Mip->SizeX = TextureWidth;
 			Mip->SizeY = TextureHeight;
 
